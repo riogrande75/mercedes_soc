@@ -1,5 +1,5 @@
 # mercedes_soc
-Read StateOfCharge and electric range for my car from mercedes api
+Read StateOfCharge and electric range for your car from mercedes api
 
 Run authorize.php once to get a valid access and refresh token.
 Then add refresh.php to crontab and run it every hour to keep access_token up to date and valid.
