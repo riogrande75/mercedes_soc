@@ -11,11 +11,8 @@ $client_id = "<your-client-id>";
 $client_secret = "<your-client-secret>";
 
 //Main calls
-//getAuthorizationCode();
-//getAccessToken($autho_code);
 $acc_token = file_get_contents('/etc/eauto/access_token', true);
-//if($debug) echo "ACCESS_TOKEN:$acc_token\n";
-getResource($acc_token);
+if($acc_token) getResource($acc_token);
 
 //      we can now use the access_token as much as we want to access protected resources
 function getResource($access_token) {
@@ -29,7 +26,15 @@ function getResource($access_token) {
                 CURLOPT_RETURNTRANSFER => true
         ));
         $responseS = curl_exec($curls);
+        $status = curl_getinfo($curls, CURLINFO_HTTP_CODE);
+        if($debug) echo "SoC_Abfrage_STATUS: $status\n";
         curl_close($curls);
+        if($status==204)
+                {
+                if($debug) echo "Received empty response with status code 204. Vehicle did not provide update for >12h. Keeping soc unchanged.\n";
+                exit(204);
+                }
+        logging("Status $status empfangen. Emfangen wurde $responseS");
         sleep(3);
         $curlr = curl_init();
         curl_setopt_array($curlr, array(
@@ -40,20 +45,39 @@ function getResource($access_token) {
         ));
         $responseR = curl_exec($curlr);
         curl_close($curlr);
+
         // debugging
         $soc =  json_decode($responseS,true)['soc']['value'];
+        $soctime = substr(json_decode($responseS,true)['soc']['timestamp'],0,10);
         $range = json_decode($responseR,true)['rangeelectric']['value'];
+        $rangetime = substr(json_decode($responseR,true)['rangeelectric']['timestamp'],0,10);
         if($debug)
-        {
-                echo "SocReso:$responseS\n";
+                {
+                echo "SoC_Abfrage_Response: $responseS\n";
+                $dateInLocal = date("Y-m-d H:i:s", $soctime);
+                echo "SocTime: ".$dateInLocal."\n";
                 print_r(json_decode($responseS, true));
-                echo "RangeResp:$responseR\n";
+                echo "Range_Abfrage_Response: $responseR\n";
+                $dateInLocal = date("Y-m-d H:i:s", $rangetime);
+                echo "RangeTime: ".$dateInLocal."\n";
+                echo "RangeResp: $responseR\n";
                 print_r(json_decode($responseR, true));
-        echo "SOC:$soc\n";
-        echo "RANGE:$range\n";
+                }
+        if($soc>0 and $soc<100)
+                {
+                $fp = fopen ("/tmp/eauto.txt", "w");
+                fwrite ($fp, $soc);
+                fclose ($fp);
         }
-        $fp = fopen ("/tmp/eauto.txt", "w");
-        fwrite ($fp, $soc);
-        fclose ($fp);
+}
+function logging($txt, $write2syslog=false)
+{
+        global $debug,$logfilename;
+        $fp_log = @fopen($logfilename.date("Y-M-d").".log", "a");
+        {
+        $dt = new DateTime(date("Y-m-d H:i:s"));
+        $logdate = $dt->format("Y-m-d H:i:s");
+        fwrite($fp_log, $logdate." $txt\n");
+        }
 }
 ?>
