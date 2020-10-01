@@ -15,7 +15,10 @@ function refreshTokens()
         {
         global $debug, $token_url, $client_id, $client_secret;
         $refresh_token = file_get_contents('/etc/eauto/refresh_token',true);
-        if(!$refresh_token) echo "ACHTUNG: Kein Refresh Token vorhanden!\n";
+        if(!$refresh_token)
+                {
+                echo "ACHTUNG: Kein Refresh Token vorhanden! - Bitte authorize.php ausführen!\n";
+        }
         $authorization = base64_encode("$client_id:$client_secret");
         $header = array("Authorization: Basic {$authorization}","Content-Type: application/x-www-form-urlencoded");
         $content = "grant_type=refresh_token&refresh_token=$refresh_token";
