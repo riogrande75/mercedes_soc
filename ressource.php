@@ -38,7 +38,7 @@ function getResource($access_token) {
                 if($debug) echo "Received empty response with status code 204. Vehicle did not provide update for >12h. Keeping soc unchanged.\n";
                 exit($status);
                 }
-        if($status==402 || $status==403 || $status==404)
+        if($status>=400 && $status<=410)
                 {
                 if($debug) echo "Received status code $status\n";
                 $exVeErrorId = json_decode($responseS,true)['exVeErrorId'];
@@ -47,7 +47,7 @@ function getResource($access_token) {
                 logging("ERROR: ErrorID: $exVeErrorId, $exVeErrorMsg");
                 exit($status);
                 }
-        if($status==500 || $status==502 || $status==503 || $status==504)
+        if($status>=500 && $status<=510)
                 {
                 if($debug) echo "Received status code $status\n";
                 $fault =  json_decode($responseS,true)['fault']['faultstring'];
