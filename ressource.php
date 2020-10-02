@@ -47,7 +47,7 @@ function getResource($access_token) {
                 logging("ERROR: ErrorID: $exVeErrorId, $exVeErrorMsg");
                 exit($status);
                 }
-        if($status==500 || $status==502 || $status==502 || $status==503)
+        if($status==500 || $status==502 || $status==503 || $status==504)
                 {
                 if($debug) echo "Received status code $status\n";
                 $fault =  json_decode($responseS,true)['fault']['faultstring'];
