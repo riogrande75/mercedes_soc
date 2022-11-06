@@ -1,18 +1,18 @@
 #!/usr/bin/php
 <?php
 $debug=0;
-$authorize_url = "https://id.mercedes-benz.com/as/authorization.oauth2";
-$token_url = "https://id.mercedes-benz.com/as/token.oauth2";
+$authorize_url = "https://ssoalpha.dvb.corpinter.net/v1/auth";
+$token_url = "https://ssoalpha.dvb.corpinter.net/v1/token";
 $FIN = "WDD242xxxx";
 $acc_token = "";
 
 // callback URL specified when the application was defined--has to match what the application says
-$callback_uri = "https://localhost";
+$callback_uri = "https://fritzbox.your.home"; //adapt it with your BYOCARD application setting
 
 $api_url_soc = "https://api.mercedes-benz.com/vehicledata/v2/vehicles/".$FIN."/resources/soc"; //StateOfCharge only
 $api_url_range = "https://api.mercedes-benz.com/vehicledata/v2/vehicles/".$FIN."/resources/rangeelectric"; //range only
 
-//      client (application) credentials - located at apim.byu.edu
+// client (application) credentials - located at apim.byu.edu
 $client_id = "<your-client-id>";
 $client_secret = "<your-client-secret>";
 
