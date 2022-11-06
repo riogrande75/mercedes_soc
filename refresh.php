@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 $debug=0;
-$token_url = "https://id.mercedes-benz.com/as/token.oauth2";
+$token_url = "https://ssoalpha.dvb.corpinter.net/v1/token";
 
 //      client (application) credentials - located at apim.byu.edu
 $client_id = "<your-client-id>";
